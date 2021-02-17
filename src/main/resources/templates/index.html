@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>在线流式语音识别web版</title>
+<meta charset="utf-8">
+<style type="text/css">
+body{margin: 0px;padding: 0px;}
+.logo{text-align: center;}
+.logo img{width: 450px;}
+.content{width: 100%;height:550px;background: #0052d9;}
+.content_box{display: inline-block; float: left;margin:5px auto;width: 100%;color: #fff;margin-top:0px;}
+.audio{width: 100%;text-align: center;}
+.btn_box{width: 100%;padding: 30px 0px;text-align: center;}
+.listing{padding: 8px 50px;background: #fff;margin: 5px 10px 0px 0px;border-radius: 3px;text-decoration: none;color: #000;}
+.listing:hover{background: #eee;}
+.Stop_listing{padding: 8px 50px;border:1px solid #eee; margin:5px 0px 0px 10px;border-radius: 3px;text-decoration: none;color: #fff;}
+.Stop_listing:hover{background: #0255de;}
+.Play_listing{padding: 8px 50px;border:1px solid #eee; margin:5px 0px 0px 10px;border-radius: 3px;text-decoration: none;color: #fff;}
+.Play_listing:hover{background: #0255de;}
+.Submit_listing{padding: 8px 50px;border:1px solid #eee; margin:5px 0px 0px 10px;border-radius: 3px;text-decoration: none;color: #fff;}
+.Submit_listing:hover{background: #0255de;}
+.content_text{color: #eee;text-align: center;padding: 5px;line-height: 30px;}
+.speechbox{width:60%;margin: 0 auto;background: #eaf5ff;min-height:200px;margin-top:10px;border-radius:5px;padding: 30px;font-size: 14px;}
+.speechtext{line-height: 20px;font-size: 16px;border-top:2px solid #ddd;padding: 5px 0px;color: #666;}
+h1{padding: 0px;margin: 0px;text-align: center;}
+.footer{width: 100%;height: 50px;text-align: center; color: #888;bottom: 2px;margin-top:150px;}
+#log{width: 100%;margin-top:-10px;text-align: center;font-size: 12px;color: #ddd;}
+#log p{color: #fff;font-size: 15px;margin-top:-5px;}
+</style>
+    <script type="text/javascript" src="../static/luyin.js"></script>
+
+</head>
+<body>
+<div class="content">
+    <div class="logo"><img src="../static/voice_logo.gif"></div>
+    <div class="content_box"><h1>在线语音识别</h1></div>
+    <div class="content_text">点击"聆听"便可录音哦</div>
+    <div class="audio">
+        <audio controls autoplay></audio>
+    </div>
+    <div class="btn_box">
+        <a class="listing" onclick="startRecording();" href="javascript:;">聆听</a>
+        <a class="Stop_listing" onclick="stopRecording();" href="javascript:;">停止</a>
+        <a class="Play_listing" onclick="playRecording();" href="javascript:;">播放</a>
+        <a class="Submit_listing" onclick="uploadAudio();" href="javascript:;">提交</a>
+    </div>
+    <div id="log"></div>
+</div>
+
+<div class="speechbox"><h3>识别内容：</h3>
+<div class="speechtext"><div id="speechtext"></div></div></div>
+<script>
+    let recorder;
+    const audio = document.querySelector('audio');
+
+    function startRecording() {
+        HZRecorder.get(function (rec) {
+            recorder = rec;
+            recorder.start();
+        });
+    }
+    function stopRecording() {
+        recorder.stop();
+    }
+    function playRecording() {
+        recorder.play(audio);
+        recorder.save();
+    }
+    function uploadAudio() {
+
+        //提交到服务器
+        recorder.upload("/speech", function (state, e) {
+            console.log(e)
+            switch (state) {
+                case 'uploading':
+                    //var percentComplete = Math.round(e.loaded * 100 / e.total) + '%';
+                    break;
+                case 'ok':
+                    //alert(e.target.responseText);
+                    alert(e.target.responseText);
+                    break;
+                case 'error':
+                    alert("上传失败");
+                    break;
+                case 'cancel':
+                    alert("上传被取消");
+                    break;
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
+
+
+
